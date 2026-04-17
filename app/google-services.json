@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "774423550046",
+    "project_id": "magnit-8a765",
+    "storage_bucket": "magnit-8a765.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:774423550046:android:249859924729bee54fbccf",
+        "android_client_info": {
+          "package_name": "com.example.magnit"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD2So6d9lk-zT-YFdPufDcqf2ZZwZZj47o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
