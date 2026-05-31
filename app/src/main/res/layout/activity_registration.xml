@@ -122,6 +122,47 @@
                     android:maxLines="1"
                     android:inputType="textEmailAddress" />
 
+                <!-- Чекбокс согласия на обработку персональных данных -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:layout_marginBottom="24dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <CheckBox
+                        android:id="@+id/cbPrivacy"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:buttonTint="#E63946"
+                        android:layout_margin="5dp"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <TextView
+                            android:layout_height="wrap_content"
+                            android:layout_width="match_parent"
+                            android:text="Я согласен на"
+                            android:textColor="#333333"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/tvPrivacyLink"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="обработку персональных данных"
+                            android:textColor="#E63946"
+                            android:textSize="14sp"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:background="?selectableItemBackground" />
+                    </LinearLayout>
+                </LinearLayout>
+
                 <!-- Кнопка регистрации -->
                 <Button
                     android:id="@+id/btnRegister"
@@ -144,8 +185,7 @@
                     android:textSize="14sp"
                     android:clickable="true"
                     android:focusable="true"
-                    android:background="?selectableItemBackground"
-                    android:padding="8dp" />
+                    android:background="?selectableItemBackground"/>
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>

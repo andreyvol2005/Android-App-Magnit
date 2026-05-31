@@ -1,6 +1,9 @@
 package com.example.magnit.Secondary
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -28,15 +31,23 @@ class Registration : AppCompatActivity() {
             insets
         }
 
+        // Ссылка на политику обработки персональных данных
+        b.tvPrivacyLink.setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://e.magnit.ru/personal-data/"))
+            startActivity(intent)
+        }
+
         b.btnRegister.setOnClickListener {
             val login = b.etLogin.text.toString()
             val password = b.etPassword.text.toString()
             val email = b.etEmail.text.toString()
+            Log.d("asdafafdss", "${login} ${password} ${email} ${b.cbPrivacy.isChecked}")
 
             when {
                 login.isEmpty() -> b.etLogin.error = "Введите логин"
                 password.isEmpty() -> b.etPassword.error = "Введите пароль"
                 email.isEmpty() -> b.etEmail.error = "Введите email"
+                !b.cbPrivacy.isChecked -> Toast.makeText(this, "Подтвердите согласие на обработку персональных данных", Toast.LENGTH_SHORT).show()
                 else -> register(login, password, email)
             }
         }
