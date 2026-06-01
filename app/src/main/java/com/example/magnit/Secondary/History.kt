@@ -57,7 +57,7 @@ class History : AppCompatActivity() {
 
     private fun setupRecycler() {
         historyAdapter = HistoryAdapter(historyItems) { item ->
-            Toast.makeText(this, "${item.title}: ${item.amount} ₽", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "${item.title}: ${item.amount} м", Toast.LENGTH_SHORT).show()
         }
         binding.historyRecycler.layoutManager = LinearLayoutManager(this)
         binding.historyRecycler.adapter = historyAdapter

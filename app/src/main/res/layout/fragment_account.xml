@@ -299,7 +299,7 @@
                         android:id="@+id/walletBalance"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="0 ₽"
+                        android:text="0 Магнитов"
                         android:textColor="#FFFFFF"
                         android:textSize="24sp"
                         android:textStyle="bold" />

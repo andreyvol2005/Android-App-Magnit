@@ -41,7 +41,7 @@ class OrderAdapter(
         orderDate.text = "от ${j.optString("creation_date", "Неизвестно")}"
         deliveryDateText.text = "Доставка: ${j.optString("delivery_date", "Неизвестно")}"
         addressText.text = j.optString("address", "Пункт выдачи").ifEmpty { "Пункт выдачи" }
-        totalAmount.text = String.format("%.2f ₽", j.optDouble("total_amount", 0.0))
+        totalAmount.text = String.format("%.2f м", j.optDouble("total_amount", 0.0))
 
         val cnt = j.optJSONArray("products")?.length() ?: 0
         itemsCountText.text = "$cnt ${when {
@@ -66,7 +66,7 @@ class OrderAdapter(
         orderDate.text = "Дата неизвестна"
         orderStatus.text = "Ошибка загрузки"
         orderStatus.setTextColor(root.context.getColor(android.R.color.holo_red_dark))
-        totalAmount.text = "0 ₽"
+        totalAmount.text = "0 м"
         itemsCountText.text = "0 товаров"
     }
 

@@ -47,7 +47,7 @@ class Order : AppCompatActivity() {
         if (userId != null) {
             loadFavoriteCategoriesAndApplyDiscount(userId)
         } else {
-            b.totalAmount.text = String.format("Сумма заказа: %.2f ₽", total)
+            b.totalAmount.text = String.format("Сумма заказа: %.2f м", total)
         }
 
         Calendar.getInstance().apply { add(Calendar.DAY_OF_MONTH, 3) }
@@ -82,21 +82,21 @@ class Order : AppCompatActivity() {
                             // Загружаем товары и применяем скидку
                             applyDiscountForFavoriteCategories(favoriteCategories)
                         } else {
-                            b.totalAmount.text = String.format("Сумма заказа: %.2f ₽", total)
+                            b.totalAmount.text = String.format("Сумма заказа: %.2f м", total)
                         }
                     } catch (e: Exception) {
                         e.printStackTrace()
-                        b.totalAmount.text = String.format("Сумма заказа: %.2f ₽", total)
+                        b.totalAmount.text = String.format("Сумма заказа: %.2f м", total)
                     }
                 } ?: run {
-                    b.totalAmount.text = String.format("Сумма заказа: %.2f ₽", total)
+                    b.totalAmount.text = String.format("Сумма заказа: %.2f м", total)
                 }
             }
     }
 
     private fun applyDiscountForFavoriteCategories(favoriteCategories: List<String>) {
         if (items.isEmpty()) {
-            b.totalAmount.text = String.format("Сумма заказа: %.2f ₽", total)
+            b.totalAmount.text = String.format("Сумма заказа: %.2f м", total)
             return
         }
 
@@ -122,13 +122,13 @@ class Order : AppCompatActivity() {
                 }
 
                 val finalTotal = if (hasDiscount) discountedTotal else total
-                b.totalAmount.text = String.format("Сумма заказа: %.2f ₽", finalTotal)
+                b.totalAmount.text = String.format("Сумма заказа: %.2f м", finalTotal)
 
                 // Сохраняем новую сумму для оплаты
                 total = finalTotal
             }
             .addOnFailureListener {
-                b.totalAmount.text = String.format("Сумма заказа: %.2f ₽", total)
+                b.totalAmount.text = String.format("Сумма заказа: %.2f м", total)
             }
     }
 

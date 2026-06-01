@@ -26,14 +26,14 @@ class Filter : AppCompatActivity() {
             insets
         }
 
-        b.priceRangeMin.text = "${intent.getIntExtra("minPrice", 0)} ₽"
+        b.priceRangeMin.text = "${intent.getIntExtra("minPrice", 0)} м"
         b.priceSeekBar.max = intent.getIntExtra("maxPrice", 10000)
 
         loadFilters()
 
         b.priceSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                b.priceRangeMax.text = "$progress ₽"
+                b.priceRangeMax.text = "$progress м"
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
@@ -60,7 +60,7 @@ class Filter : AppCompatActivity() {
         findViewById<Chip>(chips[cat] ?: R.id.categoryAll)?.isChecked = true
 
         b.priceSeekBar.progress = prefs.getInt("max_price", 10000)
-        b.priceRangeMax.text = "${b.priceSeekBar.progress} ₽"
+        b.priceRangeMax.text = "${b.priceSeekBar.progress} м"
 
         val ratingMap = mapOf(
             R.id.ratingAny to 0f, R.id.rating4Plus to 4f, R.id.rating4_5Plus to 4.5f,
@@ -118,7 +118,7 @@ class Filter : AppCompatActivity() {
         prefs.edit().clear().apply()
         findViewById<Chip>(R.id.categoryAll)?.isChecked = true
         b.priceSeekBar.progress = b.priceSeekBar.max
-        b.priceRangeMax.text = "${b.priceSeekBar.max} ₽"
+        b.priceRangeMax.text = "${b.priceSeekBar.max} м"
         b.ratingRadioGroup.check(R.id.ratingAny)
         b.reviewsRadioGroup.check(R.id.reviewsAny)
     }
