@@ -52,7 +52,7 @@ class OrderInfo : AppCompatActivity() {
         b.orderDate.text = "Создан: ${j.optString("creation_date", "Неизвестно")}"
         b.deliveryDate.text = "Доставка: ${j.optString("delivery_date", "Неизвестно")}"
         b.addressText.text = j.optString("address", "Пункт выдачи").ifEmpty { "Пункт выдачи" }
-        b.totalAmount.text = String.format("%.2f ₽", j.optDouble("total_amount", 0.0))
+        b.totalAmount.text = String.format("%.2f м", j.optDouble("total_amount", 0.0))
 
         val status = j.optString("status", "processing")
         val (text, color, enabled) = when (status) {

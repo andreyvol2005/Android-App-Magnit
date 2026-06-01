@@ -25,7 +25,7 @@ class ProductAdapter(private var products: List<Product>) :
 
     override fun onBindViewHolder(h: VH, p: Int) = with(h.b) {
         val pr = products[p]
-        productPrice.text = String.format("%.2f ₽", pr.price)
+        productPrice.text = String.format("%.2f м", pr.price)
         productTitle.text = pr.name
         ratingValue.text = pr.rating.toString()
         reviewsCount.text = "(${pr.reviewsCount})"

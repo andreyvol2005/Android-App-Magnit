@@ -35,7 +35,7 @@ class BasketAdapter(
 
         Picasso.get().load(pr.imageUrl).placeholder(R.drawable.image).error(R.drawable.image).into(productImage)
         productName.text = pr.name
-        productPrice.text = String.format("%.2f ₽", pr.price)
+        productPrice.text = String.format("%.2f м", pr.price)
         quantityText.text = i.quantity.toString()
         itemCheckbox.isChecked = i.isChecked
         favoriteButton.setImageResource(if (i.isFavorite) R.drawable.favorite_ else R.drawable.favorite)

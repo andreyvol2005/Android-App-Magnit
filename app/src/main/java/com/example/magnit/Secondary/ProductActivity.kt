@@ -52,7 +52,7 @@ class ProductActivity : AppCompatActivity() {
             doc.getString("info")?.let {
                 p = Product.fromJson(it, doc.id)
                 with(b) {
-                    productPrice.text = String.format("%.2f ₽", p!!.price)
+                    productPrice.text = String.format("%.2f м", p!!.price)
                     productName.text = p!!.name
                     ratingValue.text = p!!.rating.toString()
                     reviewsCount.text = "(${p!!.reviewsCount} оценок)"

@@ -38,7 +38,7 @@ class HistoryAdapter(
 
             // Форматируем сумму с знаком +/-
             val sign = if (item.type == "income") "+" else "-"
-            amount.text = "$sign${String.format("%.2f", item.amount)} ₽"
+            amount.text = "$sign${String.format("%.2f", item.amount)} м"
 
             // Цвет суммы
             amount.setTextColor(

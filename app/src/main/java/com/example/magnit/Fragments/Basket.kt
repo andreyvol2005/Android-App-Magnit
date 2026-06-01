@@ -207,15 +207,15 @@ class Basket : Fragment() {
 
         if (has) {
             binding.originalPriceLayout.visibility = View.VISIBLE
-            binding.originalTotalPrice.text = String.format("%.2f ₽", orig)
+            binding.originalTotalPrice.text = String.format("%.2f м", orig)
             binding.discountLayout.visibility = View.VISIBLE
-            binding.discountAmount.text = String.format("-%.2f ₽", discAmt)
+            binding.discountAmount.text = String.format("-%.2f м", discAmt)
         } else {
             binding.originalPriceLayout.visibility = View.GONE
             binding.discountLayout.visibility = View.GONE
         }
 
-        binding.totalPrice.text = String.format("%.2f ₽", final)
+        binding.totalPrice.text = String.format("%.2f м", final)
         binding.itemsCount.text = when {
             cnt == 0 -> "0 товаров"
             cnt % 10 == 1 && cnt % 100 != 11 -> "$cnt товар"
@@ -236,7 +236,7 @@ class Basket : Fragment() {
         listOf(cartRecycler, bottomCheckoutCard, selectAllButton).forEach { it.visibility = View.GONE }
         emptyCartLayout.visibility = View.VISIBLE
         emptyCartTitle.text = "Корзина пуста"; emptyCartMessage.text = "Добавьте товары из каталога"
-        totalPrice.text = "0 ₽"; itemsCount.text = "0 товаров"
+        totalPrice.text = "0 м"; itemsCount.text = "0 товаров"
         checkoutButton.apply { alpha = 0.5f; isEnabled = false }
         loading = false
     }

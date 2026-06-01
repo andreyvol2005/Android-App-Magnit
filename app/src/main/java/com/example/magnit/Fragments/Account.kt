@@ -99,7 +99,16 @@ class Account : Fragment() {
 
                             loadFavouritesCount(userId)
                             loadCartCount(userId)
-                            binding.walletBalance.text = String.format("%.0f ₽", (user.balance.toDoubleOrNull() ?: 0.0))
+                            var value: String
+                            when(user.balance.toInt() % 10) {
+                                1 -> value = "Магнит"
+                                2 -> value = "Магнита"
+                                3 -> value = "Магнита"
+                                4 -> value = "Магнита"
+                                5 -> value = "Магнитоа"
+                                else -> value = "Магнитов"
+                            }
+                            binding.walletBalance.text = String.format("%.0f ${value}", (user.balance.toDoubleOrNull() ?: 0.0))
                             binding.bonusBalance.text = (user.bonuses.toIntOrNull() ?: 0).toString()
 
                             val favCategoriesStr = json.optString("favoriteCategories", "[]")
