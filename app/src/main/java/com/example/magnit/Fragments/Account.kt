@@ -3,10 +3,13 @@ package com.example.magnit.Fragments
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.magnit.Secondary.Authorization
@@ -57,6 +60,70 @@ class Account : Fragment() {
         favouritesLink.setOnClickListener { parentFragmentManager.beginTransaction().replace(R.id.fragment_container, Favourites()).commit() }
         purchasesLink.setOnClickListener { parentFragmentManager.beginTransaction().replace(R.id.fragment_container, Basket()).commit() }
         historyButton.setOnClickListener { startActivity(Intent(requireContext(), History::class.java)) }
+        promokod.setOnClickListener {
+            val input = EditText(requireContext())
+            input.hint = "Введите промокод"
+            input.inputType = android.text.InputType.TYPE_CLASS_TEXT
+
+            AlertDialog.Builder(requireContext())
+                .setTitle("Промокод")
+                .setMessage("Введите промокод для получения бонуса 500 ₽")
+                .setView(input)
+                .setPositiveButton("Применить") { _, _ ->
+                    val code = input.text.toString().trim()
+                    if (code.isEmpty()) {
+                        Toast.makeText(requireContext(), "Введите промокод", Toast.LENGTH_SHORT).show()
+                        return@setPositiveButton
+                    }
+
+                    val userId = requireContext().getSharedPreferences("filter_prefs", Context.MODE_PRIVATE)
+                        .getString("account", "none").takeIf { it != "none" }
+
+                    if (userId == null) {
+                        Toast.makeText(requireContext(), "Войдите в аккаунт", Toast.LENGTH_SHORT).show()
+                        return@setPositiveButton
+                    }
+
+                    val validPromoCodes = listOf("MAGNIT500", "BONUS2026", "SKIDKA100", "WELCOME")
+
+                    if (!validPromoCodes.contains(code.uppercase())) {
+                        Toast.makeText(requireContext(), "Неверный промокод", Toast.LENGTH_SHORT).show()
+                        return@setPositiveButton
+                    }
+
+                    val db = FirebaseFirestore.getInstance()
+                    db.collection("Accounts").document(userId).get()
+                        .addOnSuccessListener { doc ->
+                            try {
+                                val json = JSONObject(doc.getString("info") ?: "")
+
+
+                                val currentBalance = json.optString("balance", "0").toDoubleOrNull() ?: 0.0
+                                json.put("balance", (currentBalance + 500.0).toString())
+
+
+                                val walletStr = json.optString("wallet", "[]")
+                                val date = java.text.SimpleDateFormat("yyyy.MM.dd HH:mm", java.util.Locale.getDefault())
+                                    .format(java.util.Date())
+                                val newWallet = if (walletStr == "[]") "[ \"$date\":500.0 ]"
+                                else "[ \"$date\":500.0,${walletStr.substring(1, walletStr.length - 1)} ]"
+                                json.put("wallet", newWallet)
+
+                                db.collection("Accounts").document(userId).update("info", json.toString())
+                                    .addOnSuccessListener {
+                                        Toast.makeText(requireContext(), "Промокод активирован! Начислено 500 ₽", Toast.LENGTH_LONG).show()
+                                    }
+                                    .addOnFailureListener {
+                                        Toast.makeText(requireContext(), "Ошибка", Toast.LENGTH_SHORT).show()
+                                    }
+                            } catch (e: Exception) {
+                                Toast.makeText(requireContext(), "Ошибка", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                }
+                .setNegativeButton("Отмена", null)
+                .show()
+        }
         selectCategoriesButton.setOnClickListener { startActivity(Intent(requireContext(), FavoriteCategories::class.java)) }
 
         ordersAdapter = OrderAdapter(orderIds) { orderId ->
@@ -99,17 +166,21 @@ class Account : Fragment() {
 
                             loadFavouritesCount(userId)
                             loadCartCount(userId)
-                            var value: String
-                            when(user.balance.toInt() % 10) {
-                                1 -> value = "Магнит"
-                                2 -> value = "Магнита"
-                                3 -> value = "Магнита"
-                                4 -> value = "Магнита"
-                                5 -> value = "Магнитоа"
-                                else -> value = "Магнитов"
+
+                            // Получаем баланс из JSON напрямую (без User)
+                            val balance = json.optDouble("balance", 0.0)
+                            val bonuses = json.optInt("bonuses", 0)
+
+                            val intBalance = balance.toInt()
+
+                            val magnetWord = when (intBalance % 10) {
+                                1 -> "Магнит"
+                                in 2..4 -> "Магнита"
+                                else -> "Магнитов"
                             }
-                            binding.walletBalance.text = String.format("%.0f ${value}", (user.balance.toDoubleOrNull() ?: 0.0))
-                            binding.bonusBalance.text = (user.bonuses.toIntOrNull() ?: 0).toString()
+
+                            binding.walletBalance.text = "${intBalance} $magnetWord"
+                            binding.bonusBalance.text = bonuses.toString()
 
                             val favCategoriesStr = json.optString("favoriteCategories", "[]")
                             if (favCategoriesStr.isNotEmpty() && favCategoriesStr != "[]") {
@@ -123,7 +194,10 @@ class Account : Fragment() {
                             }
                         }
                     }
-                } catch (e: Exception) { e.printStackTrace() }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    showUserView("Пользователь")
+                }
             } ?: showUserView("Пользователь")
         }.addOnFailureListener { showUserView("Пользователь") }
 
@@ -149,11 +223,15 @@ class Account : Fragment() {
     private fun showGuestView() = with(binding) {
         listOf(userCard, linksCard, walletCard, ordersCard).forEach { it.visibility = View.GONE }
         guestCard.visibility = View.VISIBLE
+        bonusCard.visibility = View.GONE
+        favoriteCategoriesCard.visibility = View.GONE
     }
 
     private fun showUserView(login: String) = with(binding) {
         listOf(userCard, linksCard, walletCard, ordersCard).forEach { it.visibility = View.VISIBLE }
         guestCard.visibility = View.GONE
+        bonusCard.visibility = View.VISIBLE
+        favoriteCategoriesCard.visibility = View.VISIBLE
         if (login.isNotEmpty()) user.text = login
     }
 
