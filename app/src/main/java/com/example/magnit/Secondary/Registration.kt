@@ -11,6 +11,7 @@ import androidx.core.content.edit
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.magnit.databinding.ActivityRegistrationBinding
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import org.json.JSONObject
 
@@ -18,6 +19,7 @@ class Registration : AppCompatActivity() {
     private var _b: ActivityRegistrationBinding? = null
     private val b get() = _b!!
     private val db = FirebaseFirestore.getInstance()
+    private val auth = FirebaseAuth.getInstance()
     private val prefs by lazy { getSharedPreferences("filter_prefs", MODE_PRIVATE) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,37 +43,57 @@ class Registration : AppCompatActivity() {
             val login = b.etLogin.text.toString()
             val password = b.etPassword.text.toString()
             val email = b.etEmail.text.toString()
-            Log.d("asdafafdss", "${login} ${password} ${email} ${b.cbPrivacy.isChecked}")
+            Log.d("Registration", "${login} ${password} ${email} ${b.cbPrivacy.isChecked}")
 
             when {
                 login.isEmpty() -> b.etLogin.error = "Введите логин"
                 password.isEmpty() -> b.etPassword.error = "Введите пароль"
                 email.isEmpty() -> b.etEmail.error = "Введите email"
                 !b.cbPrivacy.isChecked -> Toast.makeText(this, "Подтвердите согласие на обработку персональных данных", Toast.LENGTH_SHORT).show()
-                else -> register(login, password, email)
+                else -> registerWithFirebase(login, password, email)
             }
         }
         b.btnBack.setOnClickListener { finish() }
     }
 
-    private fun register(l: String, p: String, e: String) = db.collection("Accounts")
-        .add(mapOf("info" to JSONObject().apply {
-            put("login", l)
-            put("pass", p)
-            put("email", e)
-            put("favorite", "[]")
-            put("basket", "[]")
-            put("balance", "0")
-            put("order", "[]")
-            put("wallet", "[]")
-            put("bonuses", "0")
-            put("favoriteCategories", "[]")
-        }.toString()))
-        .addOnSuccessListener { doc ->
-            prefs.edit { putString("account", doc.id) }
-            toast("Регистрация успешна!")
-            finish()
-        }.addOnFailureListener { toast("Ошибка: ${it.message}") }
+    private fun registerWithFirebase(login: String, password: String, email: String) {
+        val authEmail = "$login@magnit.test"  // преобразуем логин в email для Firebase Auth
+        auth.createUserWithEmailAndPassword(authEmail, password)
+            .addOnSuccessListener { authResult ->
+                val userId = authResult.user?.uid ?: return@addOnSuccessListener
+
+                // Создаём документ пользователя в Firestore с ID = UID
+                val userData = mapOf(
+                    "info" to JSONObject().apply {
+                        put("login", login)
+                        put("pass", "")
+                        put("email", email)
+                        put("favorite", "[]")
+                        put("basket", "[]")
+                        put("balance", "0")
+                        put("order", "[]")
+                        put("wallet", "[]")
+                        put("bonuses", "0")
+                        put("favoriteCategories", "[]")
+                    }.toString()
+                )
+
+                db.collection("Accounts").document(userId).set(userData)
+                    .addOnSuccessListener {
+                        prefs.edit { putString("account", userId) }
+                        toast("Регистрация успешна!")
+                        finish()
+                    }
+                    .addOnFailureListener { e ->
+                        toast("Ошибка сохранения данных: ${e.message}")
+                        // Если не удалось сохранить в Firestore, удаляем пользователя из Auth
+                        auth.currentUser?.delete()
+                    }
+            }
+            .addOnFailureListener { e ->
+                toast("Ошибка регистрации: ${e.message}")
+            }
+    }
 
     private fun toast(msg: String) = Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     override fun onDestroy() { super.onDestroy(); _b = null }
