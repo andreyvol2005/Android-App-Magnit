@@ -8,13 +8,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.magnit.databinding.ActivityAuthorizationBinding
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import org.json.JSONObject
 
 class Authorization : AppCompatActivity() {
     private var _b: ActivityAuthorizationBinding? = null
     private val b get() = _b!!
-    private val db = FirebaseFirestore.getInstance()
+    private val auth = FirebaseAuth.getInstance()
     private val prefs by lazy { getSharedPreferences("filter_prefs", MODE_PRIVATE) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,35 +30,31 @@ class Authorization : AppCompatActivity() {
         }
 
         b.btnLogin.setOnClickListener {
-            val (login, pass) = b.etLogin.text.toString() to b.etPassword.text.toString()
+            val email = b.etLogin.text.toString()
+            val password = b.etPassword.text.toString()
             when {
-                login.isEmpty() -> b.etLogin.error = "Введите логин"
-                pass.isEmpty() -> b.etPassword.error = "Введите пароль"
-                else -> auth(login, pass)
+                email.isEmpty() -> b.etLogin.error = "Введите email"
+                password.isEmpty() -> b.etPassword.error = "Введите пароль"
+                else -> authWithFirebase(email, password)
             }
         }
         b.tvRegister.setOnClickListener { startActivity(Intent(this, Registration::class.java)) }
         b.btnBack.setOnClickListener { finish() }
     }
 
-    private fun auth(login: String, pass: String) = db.collection("Accounts").get()
-        .addOnSuccessListener { docs ->
-            var ok = false
-            docs.forEach { doc ->
-                try {
-                    JSONObject(doc.getString("info") ?: "").let { json ->
-                        if (json.getString("login") == login && json.getString("pass") == pass) {
-                            prefs.edit().putString("account", doc.id).apply()
-                            Toast.makeText(this, "Успешный вход", Toast.LENGTH_SHORT).show()
-                            ok = true
-                            finish()
-                            return@forEach
-                        }
-                    }
-                } catch (_: Exception) { }
+    private fun authWithFirebase(login: String, password: String) {
+        val email = "$login@magnit.test"  // преобразуем логин в email
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnSuccessListener { authResult ->
+                val userId = authResult.user?.uid ?: return@addOnSuccessListener
+                prefs.edit().putString("account", userId).apply()
+                Toast.makeText(this, "Успешный вход", Toast.LENGTH_SHORT).show()
+                finish()
             }
-            if (!ok) Toast.makeText(this, "Неверный логин или пароль", Toast.LENGTH_SHORT).show()
-        }.addOnFailureListener { Toast.makeText(this, "Ошибка: ${it.message}", Toast.LENGTH_SHORT).show() }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Неверный логин или пароль", Toast.LENGTH_SHORT).show()
+            }
+    }
 
     override fun onDestroy() { super.onDestroy(); _b = null }
 }
