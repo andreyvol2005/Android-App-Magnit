@@ -26,7 +26,7 @@ class Order : AppCompatActivity() {
     private var total = 0.0
     private var items = emptyList<String>()
     private val uid get() = getSharedPreferences("filter_prefs", Context.MODE_PRIVATE).getString("account", "none").takeIf { it != "none" }
-    private val df = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault())
+    private val df = SimpleDateFormat("yyyy.MM.dd HH:mm", Locale.getDefault())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

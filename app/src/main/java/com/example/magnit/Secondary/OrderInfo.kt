@@ -59,13 +59,14 @@ class OrderInfo : AppCompatActivity() {
         val status = j.optString("status", "processing")
         val (text, color, enabled) = when (status) {
             "processing" -> Triple("Обрабатывается", android.R.color.holo_orange_dark, true)
-            "shipped" -> Triple("Отправлен", android.R.color.holo_blue_dark, false)
+            "shipped" -> Triple("В пути", android.R.color.holo_blue_dark, false)
             "delivered" -> Triple("Доставлен", android.R.color.holo_green_dark, false)
-            "cancelled" -> Triple("Отменён", android.R.color.holo_red_dark, false)
             else -> Triple(status, android.R.color.darker_gray, false)
         }
-
-        b.cancelOrderButton.apply { isEnabled = enabled; visibility = if (status != "cancelled") Button.VISIBLE else Button.GONE }
+        b.orderStatus.apply {
+            this.text = text
+            setTextColor(getColor(color))
+        }
     }
 
     private fun showCancelDialog() = AlertDialog.Builder(this)
