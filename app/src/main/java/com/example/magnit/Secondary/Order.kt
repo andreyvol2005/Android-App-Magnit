@@ -189,6 +189,7 @@ class Order : AppCompatActivity() {
                 put("products", JSONArray().apply { items.forEach { put(it) } })
                 put("address", if (b.deliveryHome.isChecked) b.addressInput.text.toString() else "")
                 put("total_amount", total)
+                put("paymentCash", b.paymentCash.isChecked)
                 put("status", "processing")
             }
             db.collection("Orders").add(mapOf("info" to order.toString()))
