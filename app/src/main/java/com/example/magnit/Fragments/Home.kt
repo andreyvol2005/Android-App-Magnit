@@ -141,13 +141,23 @@ class Home : Fragment() {
     }
 
     private fun applyFilters() {
+        // Список разрешённых категорий (все категории из cats, кроме "Все")
+        val allowedCategories = listOf(
+            "Алкоголь", "Готовая еда", "Молочный прилавок", "Овощи и фрукты",
+            "Хлеб и выпечка", "Бакалея", "Консервы", "Птица, мясо", "Рыба, морепродукты", "Заморозка",
+            "Сладости", "Снеки", "Чай, кофе, какао", "Вода и напитки", "Для детей", "Для животных",
+            "Гигиена и уход", "Для дома и не только"
+        )
+
+        // Сначала фильтруем все товары по разрешённым категориям
+        var filtered = all.filter { it.category in allowedCategories }
+
         if (!prefs.getBoolean("is_filter_active", false)) {
-            adapter.updateProducts(all)
+            adapter.updateProducts(filtered)
             updateSelected("Все")
             return
         }
 
-        var filtered = all
         prefs.getString("selected_category", "Все")?.takeIf { it != "Все" }?.let { cat ->
             filtered = filtered.filter { it.category == cat }.toMutableList()
             updateSelected(cat)

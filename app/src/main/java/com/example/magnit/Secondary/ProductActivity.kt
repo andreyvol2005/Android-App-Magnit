@@ -3,6 +3,7 @@ package com.example.magnit.Secondary
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
@@ -41,36 +42,37 @@ class ProductActivity : AppCompatActivity() {
             insets
         }
 
+        // Устанавливаем пустой адаптер для RecyclerView сразу
+        b.recommendedRecycler.apply {
+            layoutManager = GridLayoutManager(this@ProductActivity, 2)
+            adapter = ProductAdapter(emptyList())
+        }
+
         pid = intent.getStringExtra("id") ?: ""
-        loadProduct()
-        loadRecommended()
         setupButtons()
-    }
+        db.collection("Products").document(pid).get()
+            .addOnSuccessListener { doc ->
+                doc.getString("info")?.let {
+                    p = Product.fromJson(it, doc.id)
+                    with(b) {
+                        productPrice.text = String.format("%.2f ₽", p!!.price)
+                        productName.text = p!!.name
+                        ratingValue.text = p!!.rating.toString()
+                        reviewsCount.text = "${p!!.reviewsCount}"
+                        Picasso.get().load(p!!.imageUrl).placeholder(R.drawable.image).error(R.drawable.image).into(productImage)
+                    }
+                    uid?.let { checkFav(); checkCart() }
 
-    private fun loadProduct() = db.collection("Products").document(pid).get()
-        .addOnSuccessListener { doc ->
-            doc.getString("info")?.let {
-                p = Product.fromJson(it, doc.id)
-                with(b) {
-                    productPrice.text = String.format("%.2f м", p!!.price)
-                    productName.text = p!!.name
-                    ratingValue.text = p!!.rating.toString()
-                    reviewsCount.text = "(${p!!.reviewsCount} оценок)"
-                    Picasso.get().load(p!!.imageUrl).placeholder(R.drawable.image).error(R.drawable.image).into(productImage)
+                    db.collection("Products").get().addOnSuccessListener { docs ->
+                        val recommended = docs.documents
+                            .mapNotNull { it.getString("info")?.let { info -> Product.fromJson(info, it.id) } }
+                            .filter { it.id != pid && it.category == p!!.category }
+                            .take(4)
+                        b.recommendedRecycler.adapter = ProductAdapter(recommended)
+                    }
                 }
-                uid?.let { checkFav(); checkCart() }
             }
-        }
-
-    private fun loadRecommended() = db.collection("Products").limit(4).get()
-        .addOnSuccessListener { docs ->
-            b.recommendedRecycler.apply {
-                layoutManager = GridLayoutManager(this@ProductActivity, 2)
-                adapter = ProductAdapter(docs.filter { it.id != pid }.mapNotNull {
-                    it.getString("info")?.let { info -> Product.fromJson(info, it.id) }
-                })
-            }
-        }
+    }
 
     private fun setupButtons() = with(b) {
         backButton.setOnClickListener { finish() }
