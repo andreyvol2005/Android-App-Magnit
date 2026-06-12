@@ -28,7 +28,7 @@ class ProductAdapter(private var products: List<Product>) :
         productPrice.text = String.format("%.2f м", pr.price)
         productTitle.text = pr.name
         ratingValue.text = pr.rating.toString()
-        reviewsCount.text = "(${pr.reviewsCount})"
+        reviewsCount.text = "${pr.reviewsCount}"
 
         favoriteButton.setImageResource(if (fav.contains(pr.id)) R.drawable.favorite_ else R.drawable.favorite)
         basket.setImageResource(if (cart.contains(pr.id)) R.drawable.basket_ else R.drawable.basket)
