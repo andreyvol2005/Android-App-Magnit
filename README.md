@@ -27,7 +27,7 @@
 [![Kotlin](https://img.shields.io/badge/Kotlin-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white)](https://kotlinlang.org)
 [![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)](https://firebase.google.com)
 
-**Magnit** — это современное Android-приложение для просмотра каталога товаров, управления корзиной и оформления заказов. Приложение разработано в рамках производственной практики ПП01 в АО «Тандер» и предназначено для демонстрации навыков работы с платформой Android, облачной базой данных Firebase и практиками CI/CD.
+**Приложение Magnit** разработано в рамках Дипломного проекта в АО «Тандер» и предназначено для демонстрации навыков работы с платформой Android, облачной базой данных Firebase и практиками CI/CD.
 
 ## 📱 Основные функции
 
