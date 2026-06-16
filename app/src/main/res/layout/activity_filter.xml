@@ -31,7 +31,6 @@
                 android:fontFamily="sans-serif-black" />
         </LinearLayout>
 
-        <!-- Карточка с категориями с автоматическим переносом -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -41,10 +40,12 @@
             app:cardBackgroundColor="#FFFFFF">
 
             <LinearLayout
+                android:id="@+id/filterMagnit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="16dp"
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -219,6 +220,117 @@
                 </com.google.android.flexbox.FlexboxLayout>
 
             </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/filterCosmetic"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:visibility="visible">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Косметическая категория"
+                    android:textColor="#E63946"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="12dp" />
+
+                <com.google.android.flexbox.FlexboxLayout
+                    android:layout_width="360dp"
+                    android:layout_height="wrap_content"
+                    app:flexWrap="wrap"
+                    app:alignItems="stretch"
+                    app:alignContent="flex_start"
+                    app:flexDirection="row"
+                    app:justifyContent="flex_start">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/categoryCosmeticAll"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:text="Все"
+                        android:checked="true"/>
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/categorySkinCare"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:text="Уход за кожей"/>
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/categoryMakeup"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:text="Макияж"/>
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/categoryHairCare"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:text="Уход за волосами"/>
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/categoryPerfumery"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:text="Парфюмерия"/>
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/categoryBodyCare"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:text="Уход за телом"/>
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/categoryMenCare"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:text="Мужской уход"/>
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/categoryChildrenCosmetic"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:text="Детская косметика"/>
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/categoryDecorative"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:text="Декоративная косметика"/>
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/categoryOrganic"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Натуральная косметика"/>
+
+                </com.google.android.flexbox.FlexboxLayout>
+
+            </LinearLayout>
+
         </androidx.cardview.widget.CardView>
 
         <!-- Карточка с ценой -->

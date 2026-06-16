@@ -48,7 +48,6 @@ class Cosmetic : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         prefs = requireContext().getSharedPreferences("filter_prefs", Context.MODE_PRIVATE)
 
-        // Адаптер
         adapter = ProductAdapter(all).apply {
             setOnFavoriteClickListener { product ->
                 if (uid == null) authThen() else toggleFav(product)
@@ -61,8 +60,20 @@ class Cosmetic : Fragment() {
             layoutManager = GridLayoutManager(requireContext(), 2)
             adapter = this@Cosmetic.adapter
         }
-
-        // Кнопка назад в Магнит
+        b.searchIcon.setOnClickListener {
+            val searchText = b.searchEditText.text.toString().trim()
+            if (searchText.isEmpty()) {
+                Toast.makeText(requireContext(), "Введите текст для поиска", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            val filteredProducts = all.filter { product ->
+                product.name.contains(searchText, ignoreCase = true)
+            }
+            if (filteredProducts.isEmpty()) {
+                Toast.makeText(requireContext(), "Товары не найдены", Toast.LENGTH_SHORT).show()
+            }
+            adapter.updateProducts(filteredProducts)
+        }
         b.magnitButton.setOnClickListener {
             startActivity(Intent(requireContext(), MainActivity::class.java).apply {
                 putExtra("open_fragment", "home")
@@ -70,12 +81,12 @@ class Cosmetic : Fragment() {
             })
         }
 
-        // Кнопка фильтра
-        b.searchCard.findViewById<ImageView>(R.id.filterIcon)?.setOnClickListener {
-            startActivity(Intent(requireContext(), Filter::class.java))
+        b.filterIcon.setOnClickListener {
+            val intent = Intent(requireContext(), Filter::class.java)
+            intent.putExtra("mode", "cosmetic")
+            startActivity(intent)
         }
 
-        // Инициализация
         setupCategories()
         checkAuth()
         loadProducts()
