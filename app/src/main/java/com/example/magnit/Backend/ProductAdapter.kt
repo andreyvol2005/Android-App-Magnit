@@ -9,7 +9,7 @@ import com.example.magnit.Secondary.ProductActivity
 import com.example.magnit.databinding.ItemProductBinding
 import com.squareup.picasso.Picasso
 
-class ProductAdapter(private var products: List<Product>) :
+class ProductAdapter(private var products: List<Product>):
     RecyclerView.Adapter<ProductAdapter.VH>() {
 
     private var fav = emptyList<String>()

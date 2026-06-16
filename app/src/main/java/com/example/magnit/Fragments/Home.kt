@@ -22,6 +22,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.MainScope
 import org.json.JSONArray
 import org.json.JSONObject
+import androidx.core.content.edit
 
 class Home : Fragment() {
     private var _binding: FragmentHomeBinding? = null
@@ -54,9 +55,26 @@ class Home : Fragment() {
         b.popularRecycler.apply { layoutManager = GridLayoutManager(requireContext(), 2); adapter = this@Home.adapter }
 
         setupCategories()
-        b.searchCard.findViewById<ImageView>(R.id.filterIcon)?.setOnClickListener { startActivity(Intent(requireContext(), Filter::class.java)) }
-
-        b.cosmeticButton.findViewById<CardView>(R.id.cosmeticButton)?.setOnClickListener {
+        b.filterIcon.setOnClickListener {
+            val intent = Intent(requireContext(), Filter::class.java)
+            intent.putExtra("mode", "magnit")
+            startActivity(intent)
+        }
+        b.searchIcon.setOnClickListener {
+            val searchText = b.searchEditText.text.toString().trim()
+            if (searchText.isEmpty()) {
+                Toast.makeText(requireContext(), "Введите текст для поиска", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            val filteredProducts = all.filter { product ->
+                product.name.contains(searchText, ignoreCase = true)
+            }
+            if (filteredProducts.isEmpty()) {
+                Toast.makeText(requireContext(), "Товары не найдены", Toast.LENGTH_SHORT).show()
+            }
+            adapter.updateProducts(filteredProducts)
+        }
+        b.cosmeticButton.setOnClickListener {
             startActivity(Intent(requireContext(), MainActivity::class.java).apply {
                 putExtra("open_fragment", "cosmetic")
                 flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
@@ -187,8 +205,18 @@ class Home : Fragment() {
                 layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply { marginEnd = 12 }
                 setOnClickListener {
                     select(this)
-                    adapter.updateProducts(if (name == "Все") all else all.filter { it.category == name })
-                    prefs.edit().putString("selected_category", name).apply()
+                    // Если выбрана категория "Все" — показываем только товары из разрешённых категорий
+                    val filteredProducts = if (name == "Все") {
+                        all.filter { it.category in listOf(
+                            "Алкоголь", "Готовая еда", "Молочный прилавок", "Овощи и фрукты",
+                            "Хлеб и выпечка", "Бакалея", "Консервы", "Птица, мясо", "Рыба, морепродукты", "Заморозка",
+                            "Сладости", "Снеки", "Чай, кофе, какао", "Вода и напитки", "Для детей", "Для животных",
+                            "Гигиена и уход", "Для дома и не только") }
+                    } else {
+                        all.filter { it.category == name }
+                    }
+                    adapter.updateProducts(filteredProducts)
+                    prefs.edit { putString("selected_category", name) }
                 }
                 if (i == 0) select(this) else deselect(this)
                 b.categoriesContainer.addView(this)

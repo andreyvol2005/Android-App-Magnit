@@ -209,7 +209,7 @@
                         android:id="@+id/totalAmount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="1234.56 ₽"
+                        android:text="1234.56 м"
                         android:textColor="#E63946"
                         android:textSize="20sp"
                         android:textStyle="bold" />
